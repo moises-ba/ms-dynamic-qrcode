@@ -34,9 +34,8 @@ func (s *service) Insert(qrcode *domain.QRCodeModel) error {
 	}
 
 	qrcode.Content = contentString
-	qrcode.PersistentContent = contentString
 
-	qrcodeBytes, err := qrcodegenerator.GenerateQRCode(qrcode.PersistentContent)
+	qrcodeBytes, err := qrcodegenerator.GenerateQRCode(qrcode.Content)
 	if err != nil {
 		return err
 	}

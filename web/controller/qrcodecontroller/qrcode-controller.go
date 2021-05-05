@@ -1,8 +1,10 @@
 package qrcodecontroller
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"path/filepath"
 
 	"github.com/gin-gonic/gin"
 	"github.com/moises-ba/ms-dynamic-qrcode/model/domain"
@@ -51,4 +53,24 @@ func (api *qrcodeApi) Generate(c *gin.Context) {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": true, "message": err.Error()})
 	}
+}
+
+func (api *qrcodeApi) Upload(c *gin.Context) {
+
+	// Source
+	file, err := c.FormFile("file")
+	if err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusBadRequest, fmt.Sprintf("Erro ao receber arquivo: %s", err.Error()))
+		return
+	}
+
+	filePathStore := "/tmp/"
+	filename := filepath.Base(filePathStore + file.Filename)
+	if err := c.SaveUploadedFile(file, filename); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": true, "message": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("Arquivo %s salvo.", file.Filename)})
 }

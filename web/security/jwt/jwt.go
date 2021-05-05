@@ -140,8 +140,6 @@ func Authorize(next func(c *gin.Context), roles ...string) func(c *gin.Context) 
 
 	return func(c *gin.Context) {
 
-		c.Request.Header.Set("Content-Type", "application/json")
-
 		if user, err := ValidateJWTToken(c.Request); err == nil {
 
 			if user.HasRole(roles) {

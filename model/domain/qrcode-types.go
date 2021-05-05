@@ -19,29 +19,32 @@ type QRCodeFilter struct {
 }
 
 type QRCodeModel struct {
-	Uuid              string             `bson:"_id,omitempty" json:"uuid,omitempty"`
-	User              string             `bson:"user,omitempty" json:"user,omitempty"`
-	QrCodeInBase64    string             `bson:"qrCodeInBase64,omitempty" json:"qrCodeInBase64,omitempty"`
-	Content           string             `bson:"content,omitempty" json:"content,omitempty"`
-	Dynamic           bool               `bson:"dynamic,omitempty" json:"dynamic,omitempty"`
-	PersistentContent string             `bson:"persistentContent,omitempty" json:"persistentContent,omitempty"`
-	FilePath          string             `bson:"filePath,omitempty" json:"filePath,omitempty"`
-	FileBase64        string             `bson:"fileBase64,omitempty" json:"fileBase64,omitempty"`
-	Type              string             `bson:"type,omitempty" json:"type,omitempty"`
-	IsImage           bool               `bson:"isImage,omitempty" json:"isImage,omitempty"`
-	CustomFields      []*CustomField     `bson:"customFields,omitempty" json:"customFields,omitempty"`
-	Url               *StringQRCodeField `bson:"url,omitempty" json:"url,omitempty"`
-	Text              *StringQRCodeField `bson:"text,omitempty" json:"text,omitempty"`
-	Vcard             *VCardField        `bson:"vcard,omitempty" json:"vcard,omitempty"`
-	Email             *EmailField        `bson:"email,omitempty" json:"email,omitempty"`
-	Wifi              *WIFIField         `bson:"wifi,omitempty" json:"wifi,omitempty"`
-	Bitcoin           *BitCoinField      `bson:"bitcoin,omitempty" json:"bitcoin,omitempty"`
-	Twitter           *TwitterField      `bson:"twitter,omitempty" json:"twitter,omitempty"`
-	Facebook          *FacebookField     `bson:"facebook,omitempty" json:"facebook,omitempty"`
-	Pdf               *PDFField          `bson:"pdf,omitempty" json:"pdf,omitempty"`
-	Mp3               *MP3Field          `bson:"mp3,omitempty" json:"mp3,omitempty"`
-	Appstores         *AppStoresField    `bson:"appstores,omitempty" json:"appstores,omitempty"`
-	Photos            *PhotosField       `bson:"photos,omitempty" json:"photos,omitempty"`
+	Uuid           string             `bson:"_id,omitempty" json:"uuid,omitempty"`
+	User           string             `bson:"user,omitempty" json:"user,omitempty"`
+	QrCodeInBase64 string             `bson:"qrCodeInBase64,omitempty" json:"qrCodeInBase64,omitempty"`
+	Content        string             `bson:"content,omitempty" json:"content,omitempty"`
+	Dynamic        bool               `bson:"dynamic,omitempty" json:"dynamic,omitempty"`
+	FilePath       string             `bson:"filePath,omitempty" json:"filePath,omitempty"`
+	FileBase64     string             `bson:"fileBase64,omitempty" json:"fileBase64,omitempty"`
+	Type           string             `bson:"type,omitempty" json:"type,omitempty"`
+	IsImage        bool               `bson:"isImage,omitempty" json:"isImage,omitempty"`
+	CustomFields   []*CustomField     `bson:"customFields,omitempty" json:"customFields,omitempty"`
+	Url            *StringQRCodeField `bson:"url,omitempty" json:"url,omitempty"`
+	Text           *StringQRCodeField `bson:"text,omitempty" json:"text,omitempty"`
+	Vcard          *VCardField        `bson:"vcard,omitempty" json:"vcard,omitempty"`
+	Email          *EmailField        `bson:"email,omitempty" json:"email,omitempty"`
+	Wifi           *WIFIField         `bson:"wifi,omitempty" json:"wifi,omitempty"`
+	Bitcoin        *BitCoinField      `bson:"bitcoin,omitempty" json:"bitcoin,omitempty"`
+	Twitter        *TwitterField      `bson:"twitter,omitempty" json:"twitter,omitempty"`
+	Facebook       *FacebookField     `bson:"facebook,omitempty" json:"facebook,omitempty"`
+	Pdf            *PDFField          `bson:"pdf,omitempty" json:"pdf,omitempty"`
+	Mp3            *MP3Field          `bson:"mp3,omitempty" json:"mp3,omitempty"`
+	Appstores      *AppStoresField    `bson:"appstores,omitempty" json:"appstores,omitempty"`
+	Photos         *PhotosField       `bson:"photos,omitempty" json:"photos,omitempty"`
+}
+
+func (q *QRCodeModel) IsFile() bool {
+	return q.Type == "pdf" || q.Type == "mp3" || q.Type == "img"
 }
 
 type CustomField struct {

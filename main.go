@@ -14,10 +14,13 @@ import (
 )
 
 func CORS(c *gin.Context) {
+
 	c.Header("Access-Control-Allow-Origin", "*")
-	c.Header("Access-Control-Allow-Methods", "*")
+	c.Header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS")
 	c.Header("Access-Control-Allow-Headers", "*")
-	c.Header("Content-Type", "application/json")
+	c.Header("Access-Control-Allow-Credentials", "true")
+	c.Header("Origin", "*")
+	c.Header("Content-Type", "*")
 
 	if c.Request.Method != "OPTIONS" {
 		c.Next()
@@ -47,7 +50,17 @@ func main() {
 
 	//inicializando e resgistrando endpoints
 	r := gin.Default()
+	r.MaxMultipartMemory = 8 << 20 // 8 MiB
 	r.Use(CORS)
+	/*r.Use(cors.Middleware(cors.Config{
+		Origins:         "*",
+		Methods:         "GET, PUT, POST, DELETE, OPTIONS",
+		RequestHeaders:  "Origin, Authorization, Content-Type",
+		ExposedHeaders:  "*",
+		MaxAge:          50 * time.Second,
+		Credentials:     true,
+		ValidateHeaders: false,
+	}))*/
 
 	api := r.Group("/ms-dynamic-qrcode")
 
@@ -55,6 +68,9 @@ func main() {
 	qrCodeGroup := api.Group("/qrcode")
 	qrCodeGroup.GET("/list", jwt.Authorize(qrCodeController.List, "ADMIN", "USER"))
 	qrCodeGroup.POST("/generate", jwt.Authorize(qrCodeController.Generate, "ADMIN", "USER"))
+
+	fileGroup := api.Group("/file")
+	fileGroup.POST("/uploadFile", jwt.Authorize(qrCodeController.Upload, "ADMIN", "USER"))
 
 	r.Run(":8081")
 }
