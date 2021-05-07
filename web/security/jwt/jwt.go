@@ -96,17 +96,33 @@ func convert(token jwt.Token) *model.PrincipalUserDetail {
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 
-	var groups []string
-
-	for _, group := range claims["groups"].([]interface{}) {
-		groups = append(groups, group.(string))
-	}
-
 	if ok && token.Valid {
+
+		var groups = make([]string, 0, 10)
+		if tokenGroups := claims["groups"]; tokenGroups != nil {
+			for _, group := range tokenGroups.([]interface{}) {
+				groups = append(groups, group.(string))
+			}
+		}
+
+		var userName, login, uuid string
+
+		if givenName := claims["given_name"]; givenName != nil {
+			userName = givenName.(string)
+		}
+
+		if preferedUserName := claims["preferred_username"]; preferedUserName != nil {
+			login = preferedUserName.(string)
+		}
+
+		if sub := claims["sub"]; sub != nil {
+			uuid = sub.(string)
+		}
+
 		return &model.PrincipalUserDetail{
-			UserName: claims["given_name"].(string),
-			Login:    claims["preferred_username"].(string),
-			UUID:     claims["sub"].(string),
+			UserName: userName,
+			Login:    login,
+			UUID:     uuid,
 			Roles:    groups,
 		}
 	}
