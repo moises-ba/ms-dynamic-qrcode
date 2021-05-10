@@ -31,12 +31,13 @@ func (s *service) FindQRCodes(filter *domain.QRCodeFilter) ([]*domain.QRCodeResp
 	total := len(qrCodes)
 	if total > 0 {
 		qrCodesResponse := make([]*domain.QRCodeResponse, total)
-		var response domain.QRCodeResponse
+		var response *domain.QRCodeResponse
 		for i, v := range qrCodes {
+			response = new(domain.QRCodeResponse)
 			response.QRCodeModel = *v
 			response.IsImage = v.IsImage()
 			response.Dynamic = v.IsDynamic()
-			qrCodesResponse[i] = &response
+			qrCodesResponse[i] = response
 		}
 
 		return qrCodesResponse, nil
@@ -70,4 +71,8 @@ func (s *service) Insert(qrcode *domain.QRCodeModel) (*domain.QRCodeResponse, er
 	return &domain.QRCodeResponse{QRCodeModel: *qrcode,
 		IsImage: qrcode.IsImage(),
 		Dynamic: qrcode.IsDynamic()}, nil
+}
+
+func (s *service) Delete(pFilter *domain.QRCodeFilter) error {
+	return s.repository.Delete(pFilter)
 }

@@ -75,3 +75,19 @@ func (api *qrcodeApi) Upload(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("Arquivo %s salvo.", file.Filename)})
 }
+
+func (api *qrcodeApi) Delete(c *gin.Context) {
+	user := c.Keys[(utils.UserParamName)].(*model.PrincipalUserDetail)
+
+	qrCode := &domain.QRCodeFilter{}
+	qrCode.User = user.Login
+	qrCode.Uuid = c.Param("qrcodeid")
+
+	err := api.service.Delete(qrCode)
+	if err == nil {
+		c.JSON(http.StatusOK, gin.H{})
+	} else {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": true, "message": err.Error()})
+	}
+}

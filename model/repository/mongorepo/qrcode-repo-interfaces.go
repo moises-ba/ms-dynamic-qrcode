@@ -8,6 +8,7 @@ type Reader interface {
 
 type Writer interface {
 	Insert(qrcode *domain.QRCodeModel) error
+	Delete(filter *domain.QRCodeFilter) error
 }
 
 type Repository interface {

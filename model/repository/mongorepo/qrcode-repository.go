@@ -72,3 +72,19 @@ func (r *repo) FindQRCodes(pFilter *domain.QRCodeFilter) ([]*domain.QRCodeModel,
 
 	return qrcodes, nil
 }
+
+func (r *repo) Delete(pFilter *domain.QRCodeFilter) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	filter := bson.D{primitive.E{Key: "user", Value: pFilter.User}}
+
+	filter = append(filter, primitive.E{Key: "_id", Value: pFilter.Uuid})
+
+	_, err := r.collectionQrcode.DeleteMany(ctx, filter)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

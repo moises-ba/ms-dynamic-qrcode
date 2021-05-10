@@ -20,6 +20,7 @@ func (c StringQRCodeField) ToContentQRCode() (string, error) {
 }
 
 type QRCodeFilter struct {
+	Uuid string
 	User string
 }
 
