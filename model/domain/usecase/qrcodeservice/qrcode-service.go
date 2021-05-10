@@ -21,26 +21,53 @@ func NewService(repo mongorepo.Repository) Service {
 
 }
 
-func (s *service) FindQRCodes(filter *domain.QRCodeFilter) ([]*domain.QRCodeModel, error) {
-	return s.repository.FindQRCodes(filter)
+func (s *service) FindQRCodes(filter *domain.QRCodeFilter) ([]*domain.QRCodeResponse, error) {
+
+	qrCodes, err := s.repository.FindQRCodes(filter)
+	if err != nil {
+		return nil, err
+	}
+
+	total := len(qrCodes)
+	if total > 0 {
+		qrCodesResponse := make([]*domain.QRCodeResponse, total)
+		var response domain.QRCodeResponse
+		for i, v := range qrCodes {
+			response.QRCodeModel = *v
+			response.IsImage = v.IsImage()
+			response.Dynamic = v.IsDynamic()
+			qrCodesResponse[i] = &response
+		}
+
+		return qrCodesResponse, nil
+	}
+
+	return make([]*domain.QRCodeResponse, 0), nil
 }
-func (s *service) Insert(qrcode *domain.QRCodeModel) error {
+func (s *service) Insert(qrcode *domain.QRCodeModel) (*domain.QRCodeResponse, error) {
 
 	qrCodeContentIf := utils.GetValueByReflection(qrcode, qrcode.Type).(domain.QRCodeContent)
 
 	contentString, err := (qrCodeContentIf).ToContentQRCode()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	qrcode.Content = contentString
 
 	qrcodeBytes, err := qrcodegenerator.GenerateQRCode(qrcode.Content)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	qrcode.QrCodeInBase64 = base64.StdEncoding.EncodeToString(qrcodeBytes)
 
-	return s.repository.Insert(qrcode)
+	errMongo := s.repository.Insert(qrcode)
+	if errMongo != nil {
+		return nil, errMongo
+	}
+
+	return &domain.QRCodeResponse{QRCodeModel: *qrcode,
+		IsImage: qrcode.IsImage(),
+		Dynamic: qrcode.IsDynamic()}, nil
 }

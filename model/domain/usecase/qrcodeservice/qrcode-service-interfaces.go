@@ -5,6 +5,6 @@ import (
 )
 
 type Service interface {
-	FindQRCodes(filter *domain.QRCodeFilter) ([]*domain.QRCodeModel, error)
-	Insert(qrcode *domain.QRCodeModel) error
+	FindQRCodes(filter *domain.QRCodeFilter) ([]*domain.QRCodeResponse, error)
+	Insert(qrcode *domain.QRCodeModel) (*domain.QRCodeResponse, error)
 }

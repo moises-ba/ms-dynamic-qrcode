@@ -28,11 +28,9 @@ type QRCodeModel struct {
 	User           string             `bson:"user,omitempty" json:"user,omitempty"`
 	QrCodeInBase64 string             `bson:"qrCodeInBase64,omitempty" json:"qrCodeInBase64,omitempty"`
 	Content        string             `bson:"content,omitempty" json:"content,omitempty"`
-	Dynamic        bool               `bson:"dynamic,omitempty" json:"dynamic,omitempty"`
 	FilePath       string             `bson:"filePath,omitempty" json:"filePath,omitempty"`
 	FileBase64     string             `bson:"fileBase64,omitempty" json:"fileBase64,omitempty"`
 	Type           string             `bson:"type,omitempty" json:"type,omitempty"`
-	IsImage        bool               `bson:"isImage,omitempty" json:"isImage,omitempty"`
 	CustomFields   []*CustomField     `bson:"customFields,omitempty" json:"customFields,omitempty"`
 	Url            *StringQRCodeField `bson:"url,omitempty" json:"url,omitempty"`
 	Text           *StringQRCodeField `bson:"text,omitempty" json:"text,omitempty"`
@@ -50,6 +48,28 @@ type QRCodeModel struct {
 
 func (q *QRCodeModel) IsFile() bool {
 	return q.Type == "pdf" || q.Type == "mp3" || q.Type == "img"
+}
+
+func (q *QRCodeModel) IsImage() bool {
+	return q.Type == "img"
+}
+
+func (q *QRCodeModel) IsDynamic() bool {
+	dynamicTypes := []interface{}{
+		"photo",
+		"appstores",
+		"mp3",
+		"pdf",
+		"mp3",
+	}
+
+	return utils.Contains(q.Type, dynamicTypes)
+}
+
+type QRCodeResponse struct {
+	QRCodeModel
+	Dynamic bool `bson:"dynamic,omitempty" json:"dynamic,omitempty"`
+	IsImage bool `bson:"isImage,omitempty" json:"isImage,omitempty"`
 }
 
 type CustomField struct {

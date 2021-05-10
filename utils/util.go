@@ -36,3 +36,13 @@ func NvlString(value, anotherElse string) string {
 		return anotherElse
 	}
 }
+
+func Contains(item interface{}, list []interface{}) bool {
+	for _, v := range list {
+		if v == item {
+			return true
+		}
+	}
+
+	return false
+}
