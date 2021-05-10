@@ -24,3 +24,15 @@ func GetValueByReflection(obj interface{}, field string) interface{} {
 	valueQRCode := reflect.ValueOf(obj)
 	return valueQRCode.Elem().FieldByName(fieldName).Interface()
 }
+
+func IsEmpty(txt string) bool {
+	return strings.TrimSpace(txt) == ""
+}
+
+func NvlString(value, anotherElse string) string {
+	if !IsEmpty(value) {
+		return value
+	} else {
+		return anotherElse
+	}
+}

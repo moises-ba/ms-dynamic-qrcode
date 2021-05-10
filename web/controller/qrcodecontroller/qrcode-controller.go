@@ -48,7 +48,7 @@ func (api *qrcodeApi) Generate(c *gin.Context) {
 	}
 
 	if err := api.service.Insert(qrCode); err == nil {
-		c.JSON(http.StatusOK, nil)
+		c.JSON(http.StatusOK, qrCode)
 	} else {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": true, "message": err.Error()})

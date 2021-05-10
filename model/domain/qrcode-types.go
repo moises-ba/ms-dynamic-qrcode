@@ -1,6 +1,11 @@
 package domain
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"strings"
+
+	"github.com/moises-ba/ms-dynamic-qrcode/utils"
+)
 
 //import "go.mongodb.org/mongo-driver/bson/primitive"
 
@@ -77,8 +82,62 @@ type VCardField struct {
 	Website         string `bson:"website,omitempty" json:"website,omitempty"`
 }
 
+const (
+	VCARD_HEADER string = "BEGIN:VCARD\nVERSION:3.0\n"
+	VCARD_FOOTER string = "END:VCARD"
+)
+
+func getValueWithSpaceSufixOrBlank(text string) string {
+	if aux := strings.TrimSpace(text); !utils.IsEmpty(aux) {
+		return aux + " "
+	}
+	return ""
+}
+
 func (c *VCardField) ToContentQRCode() (string, error) {
-	return "IMPLEMENTAR", nil
+
+	vcard := VCARD_HEADER
+
+	if !utils.IsEmpty(c.Name) || !utils.IsEmpty(c.LastName) {
+		vcard += "N:" + utils.NvlString(c.Name, "") + " " + utils.NvlString(c.LastName, "") + "\n"
+	}
+
+	if !utils.IsEmpty(c.Phone) {
+		vcard += "\nTEL;TYPE=Trabalho:" + strings.TrimSpace(c.Phone)
+	}
+
+	if !utils.IsEmpty(c.Cellphone) {
+		vcard += "\nTEL;TYPE=Celular:" + strings.TrimSpace(c.Cellphone)
+	}
+
+	if !utils.IsEmpty(c.Email) {
+		vcard += "\nEMAIL:" + c.Email
+	}
+
+	lEndereco := ""
+	lEndereco += getValueWithSpaceSufixOrBlank(c.Street)
+	lEndereco += getValueWithSpaceSufixOrBlank(c.City)
+	lEndereco += getValueWithSpaceSufixOrBlank(c.State)
+	lEndereco += getValueWithSpaceSufixOrBlank(c.PostalCode)
+	lEndereco += getValueWithSpaceSufixOrBlank(c.Country)
+
+	if !utils.IsEmpty(lEndereco) {
+		vcard += "\nADR:" + lEndereco
+	}
+
+	if !utils.IsEmpty(c.CorporationName) {
+		vcard += "\nEmpresa:" + strings.TrimSpace(c.CorporationName) + "\n"
+	}
+	if !utils.IsEmpty(c.Ocupation) {
+		vcard += "\nTítulo:" + strings.TrimSpace(c.Ocupation) + "\n"
+	}
+	if !utils.IsEmpty(c.Website) {
+		vcard += "\nURL:" + strings.TrimSpace(c.Website) + "\n"
+	}
+
+	vcard += "\n" + VCARD_FOOTER
+
+	return vcard, nil
 }
 
 type EmailField struct {
@@ -88,7 +147,10 @@ type EmailField struct {
 }
 
 func (c *EmailField) ToContentQRCode() (string, error) {
-	return "IMPLEMENTAR", nil
+	email := "mailto:recipient:" + c.Email
+	email += "?subject=" + c.Subject
+	email += "&body=" + c.Message
+	return email, nil
 }
 
 type SMSField struct {
