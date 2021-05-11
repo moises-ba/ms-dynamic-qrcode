@@ -54,6 +54,10 @@ func (s *service) Insert(qrcode *domain.QRCodeModel) (*domain.QRCodeResponse, er
 		return nil, err
 	}
 
+	if qrcode.IsDynamic() {
+		contentString += qrcode.Uuid
+	}
+
 	qrcode.Content = contentString
 
 	qrcodeBytes, err := qrcodegenerator.GenerateQRCode(qrcode.Content)

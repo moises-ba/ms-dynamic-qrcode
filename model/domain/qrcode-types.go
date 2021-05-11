@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"strings"
 
+	"github.com/moises-ba/ms-dynamic-qrcode/config"
 	"github.com/moises-ba/ms-dynamic-qrcode/utils"
 )
 
@@ -220,7 +221,7 @@ type PDFField struct {
 }
 
 func (c *PDFField) ToContentQRCode() (string, error) {
-	return "IMPLEMENTAR", nil
+	return config.GetURLBaseDymamicQRCode(), nil
 }
 
 type MP3Field struct {
@@ -228,7 +229,7 @@ type MP3Field struct {
 }
 
 func (c *MP3Field) ToContentQRCode() (string, error) {
-	return "IMPLEMENTAR", nil
+	return config.GetURLBaseDymamicQRCode(), nil
 }
 
 type FacebookField struct {
@@ -249,5 +250,5 @@ type PhotosField struct {
 }
 
 func (c *PhotosField) ToContentQRCode() (string, error) {
-	return "IMPLEMENTAR", nil
+	return config.GetURLBaseDymamicQRCode(), nil
 }
