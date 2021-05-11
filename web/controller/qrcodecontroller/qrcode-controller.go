@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"path/filepath"
+	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/moises-ba/ms-dynamic-qrcode/config"
 	"github.com/moises-ba/ms-dynamic-qrcode/model/domain"
 	"github.com/moises-ba/ms-dynamic-qrcode/model/domain/usecase/qrcodeservice"
 	"github.com/moises-ba/ms-dynamic-qrcode/utils"
@@ -57,7 +58,7 @@ func (api *qrcodeApi) Generate(c *gin.Context) {
 }
 
 func (api *qrcodeApi) Upload(c *gin.Context) {
-
+	user := c.Keys[(utils.UserParamName)].(*model.PrincipalUserDetail)
 	// Source
 	file, err := c.FormFile("file")
 	if err != nil {
@@ -66,14 +67,23 @@ func (api *qrcodeApi) Upload(c *gin.Context) {
 		return
 	}
 
-	filePathStore := "/tmp/"
-	filename := filepath.Base(filePathStore + file.Filename)
-	if err := c.SaveUploadedFile(file, filename); err != nil {
+	fullFilePathDest := config.GetQRCodeVolumeStorePath() + user.Login + "/"
+
+	err = os.MkdirAll(fullFilePathDest, 0755)
+	if err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusBadRequest, fmt.Sprintf("Nao foi possivel criar arquivo: %s", err.Error()))
+	}
+
+	fullFilePathDest += file.Filename
+
+	if err := c.SaveUploadedFile(file, fullFilePathDest); err != nil {
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": true, "message": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("Arquivo %s salvo.", file.Filename)})
+	c.JSON(http.StatusOK, gin.H{"filePath": fullFilePathDest})
 }
 
 func (api *qrcodeApi) Delete(c *gin.Context) {

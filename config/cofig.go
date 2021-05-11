@@ -5,11 +5,12 @@ import (
 )
 
 const (
-	MONGO_SERVER_URL        = "MONGO_SERVER_URL"
-	MONGO_USER              = "MONGO_USER"
-	MONGO_PASSWORD          = "MONGO_PASSWORD"
-	MONGO_QRCODE_BD         = "MONGO_QRCODE_BD"
-	QRCODE_BASE_DYNAMIC_URL = "QRCODE_BASE_DYNAMIC_URL" //url base para os qrcodes dinamicos
+	MONGO_SERVER_URL         = "MONGO_SERVER_URL"
+	MONGO_USER               = "MONGO_USER"
+	MONGO_PASSWORD           = "MONGO_PASSWORD"
+	MONGO_QRCODE_BD          = "MONGO_QRCODE_BD"
+	QRCODE_BASE_DYNAMIC_URL  = "QRCODE_BASE_DYNAMIC_URL" //url base para os qrcodes dinamicos
+	QRCODE_VOLUME_STORE_PATH = "QRCODE_VOLUME_STORE_PATH"
 )
 
 func GetMogoServerURL() string {
@@ -26,4 +27,8 @@ func GetMongoPassWord() string {
 
 func GetURLBaseDymamicQRCode() string {
 	return utils.GetEnv(QRCODE_BASE_DYNAMIC_URL, "http://localhost:4200/")
+}
+
+func GetQRCodeVolumeStorePath() string {
+	return utils.GetEnv(QRCODE_VOLUME_STORE_PATH, "/tmp/")
 }
