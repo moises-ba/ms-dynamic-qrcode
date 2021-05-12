@@ -5,10 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -140,7 +141,7 @@ func ValidateJWTToken(r *http.Request) (*model.PrincipalUserDetail, error) {
 		token, err := jwt.Parse(jwtToken, funcjWTValidation)
 
 		if err != nil {
-			log.Println(err)
+			log.Error(err)
 			return nil, err
 		}
 

@@ -30,6 +30,7 @@ type QRCodeModel struct {
 	User           string             `bson:"user,omitempty" json:"user,omitempty"`
 	QrCodeInBase64 string             `bson:"qrCodeInBase64,omitempty" json:"qrCodeInBase64,omitempty"`
 	Content        string             `bson:"content,omitempty" json:"content,omitempty"`
+	Dynamic        bool               `bson:"dynamic,omitempty" json:"dynamic,omitempty"`
 	FilePath       string             `bson:"filePath,omitempty" json:"filePath,omitempty"`
 	FileBase64     string             `bson:"fileBase64,omitempty" json:"fileBase64,omitempty"`
 	Type           string             `bson:"type,omitempty" json:"type,omitempty"`
@@ -56,7 +57,7 @@ func (q *QRCodeModel) IsImage() bool {
 	return q.Type == "img"
 }
 
-func (q *QRCodeModel) IsDynamic() bool {
+func (q *QRCodeModel) IsMandatoryDynamic() bool {
 	dynamicTypes := []interface{}{
 		"photo",
 		"appstores",
@@ -70,7 +71,6 @@ func (q *QRCodeModel) IsDynamic() bool {
 
 type QRCodeResponse struct {
 	QRCodeModel
-	Dynamic bool `bson:"dynamic,omitempty" json:"dynamic,omitempty"`
 	IsImage bool `bson:"isImage,omitempty" json:"isImage,omitempty"`
 }
 

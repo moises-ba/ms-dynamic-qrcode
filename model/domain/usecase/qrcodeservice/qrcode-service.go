@@ -36,7 +36,7 @@ func (s *service) FindQRCodes(filter *domain.QRCodeFilter) ([]*domain.QRCodeResp
 			response = new(domain.QRCodeResponse)
 			response.QRCodeModel = *v
 			response.IsImage = v.IsImage()
-			response.Dynamic = v.IsDynamic()
+			response.Dynamic = v.Dynamic
 			qrCodesResponse[i] = response
 		}
 
@@ -54,8 +54,8 @@ func (s *service) Insert(qrcode *domain.QRCodeModel) (*domain.QRCodeResponse, er
 		return nil, err
 	}
 
-	if qrcode.IsDynamic() {
-		contentString += qrcode.Uuid
+	if qrcode.IsMandatoryDynamic() || qrcode.Dynamic { //se o qrcode é obrigatoriamente dinamico ou foi selecionado como dinamico pelo usuario
+		contentString += qrcode.Uuid + "/view"
 	}
 
 	qrcode.Content = contentString
@@ -73,8 +73,7 @@ func (s *service) Insert(qrcode *domain.QRCodeModel) (*domain.QRCodeResponse, er
 	}
 
 	return &domain.QRCodeResponse{QRCodeModel: *qrcode,
-		IsImage: qrcode.IsImage(),
-		Dynamic: qrcode.IsDynamic()}, nil
+		IsImage: qrcode.IsImage()}, nil
 }
 
 func (s *service) Delete(pFilter *domain.QRCodeFilter) error {
