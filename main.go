@@ -32,8 +32,6 @@ func CORS(c *gin.Context) {
 
 func main() {
 
-	log.Logger().Info("TESTESSSSSSSSSSSs")
-
 	//inicializando a conexão com o mongo
 	mongoClient, funcDisconnect, err := mongorepo.Connect()
 	if err != nil {
