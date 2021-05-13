@@ -1,15 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
-	"runtime/debug"
-	"strings"
-
-	log "github.com/sirupsen/logrus"
 
 	"github.com/gin-gonic/gin"
 	"github.com/moises-ba/ms-dynamic-qrcode/config"
+	"github.com/moises-ba/ms-dynamic-qrcode/log"
 	"github.com/moises-ba/ms-dynamic-qrcode/model/domain/usecase/qrcodeservice"
 	"github.com/moises-ba/ms-dynamic-qrcode/model/repository/mongorepo"
 	"github.com/moises-ba/ms-dynamic-qrcode/utils"
@@ -34,53 +30,14 @@ func CORS(c *gin.Context) {
 
 }
 
-type appHook struct {
-}
-
-func (h *appHook) Levels() []log.Level {
-	return log.AllLevels
-}
-
-func (h *appHook) Fire(e *log.Entry) error {
-
-	appName := "undefined"
-
-	buildInfo, ok := debug.ReadBuildInfo()
-	if ok {
-		appName = buildInfo.Main.Path[strings.LastIndex(buildInfo.Main.Path, "/")+1:] //nome do modulo
-		appName += " " + buildInfo.Main.Version                                       //versao do modulo
-
-	} else {
-		fmt.Println("Nao pode ler a build info")
-	}
-
-	e.Message = "[" + appName + "] " + e.Message
-	//e.Data["app"] = appName"
-	return nil
-}
-
-//configura o loger
-func initLogger() {
-
-	log.SetReportCaller(true)
-	log.SetFormatter(&log.TextFormatter{
-		FullTimestamp: true, //DisableColors: true,
-	})
-	log.AddHook(&appHook{})
-
-}
-
 func main() {
 
-	//configurando logrus
-	initLogger()
-
-	log.Info("TESTESSSSSSSSSSSs")
+	log.Logger().Info("TESTESSSSSSSSSSSs")
 
 	//inicializando a conexão com o mongo
 	mongoClient, funcDisconnect, err := mongorepo.Connect()
 	if err != nil {
-		log.Fatal("Falha ao conectar no mongo.", err)
+		log.Logger().Fatal("Falha ao conectar no mongo.", err)
 	}
 	defer funcDisconnect()
 

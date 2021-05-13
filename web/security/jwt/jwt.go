@@ -9,7 +9,7 @@ import (
 	"os"
 	"strings"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/moises-ba/ms-dynamic-qrcode/log"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -57,7 +57,7 @@ valida o token via chave publica do keycloak
 func validateKeyCloak(token *jwt.Token) (interface{}, error) {
 	rsaPublicKey, err := jwt.ParseRSAPublicKeyFromPEM([]byte(ExtractCert()))
 	if err != nil {
-		log.Fatal(err)
+		log.Logger().Fatal(err)
 	}
 
 	if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
@@ -71,7 +71,7 @@ func getKeyCloakCerts() *model.KeyCloakCert {
 
 	keyCloakURI := jwtConfig.KeyCloakURI
 	if keyCloakURI == "" {
-		log.Fatal(errors.New("nao foi possvel obter certificado do keycloak"))
+		log.Logger().Fatal(errors.New("nao foi possvel obter certificado do keycloak"))
 	}
 
 	response, err := http.Get(keyCloakURI)
@@ -83,7 +83,7 @@ func getKeyCloakCerts() *model.KeyCloakCert {
 
 	responseData, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		log.Fatal(err)
+		log.Logger().Fatal(err)
 	}
 
 	keyCert := new(model.KeyCloakCert)
@@ -141,7 +141,7 @@ func ValidateJWTToken(r *http.Request) (*model.PrincipalUserDetail, error) {
 		token, err := jwt.Parse(jwtToken, funcjWTValidation)
 
 		if err != nil {
-			log.Error(err)
+			log.Logger().Error(err)
 			return nil, err
 		}
 
