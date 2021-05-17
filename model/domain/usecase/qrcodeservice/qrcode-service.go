@@ -2,9 +2,12 @@ package qrcodeservice
 
 import (
 	"encoding/base64"
+	"strings"
 
+	log "github.com/moises-ba/ms-dynamic-qrcode/log"
 	"github.com/moises-ba/ms-dynamic-qrcode/model/domain"
 	"github.com/moises-ba/ms-dynamic-qrcode/model/domain/qrcodegenerator"
+	"github.com/moises-ba/ms-dynamic-qrcode/model/errors"
 	"github.com/moises-ba/ms-dynamic-qrcode/model/repository/mongorepo"
 	"github.com/moises-ba/ms-dynamic-qrcode/utils"
 )
@@ -54,8 +57,15 @@ func (s *service) Insert(qrcode *domain.QRCodeModel) (*domain.QRCodeResponse, er
 		return nil, err
 	}
 
-	if qrcode.IsMandatoryDynamic() || qrcode.Dynamic { //se o qrcode é obrigatoriamente dinamico ou foi selecionado como dinamico pelo usuario
+	if qrcode.IsMandatoryDynamic() || qrcode.Dynamic { //se o qrcode é obrigatoriamente dinamico ou foi selecionado como dinamico pelo usuario logado
+		qrcode.Dynamic = true
 		contentString += qrcode.Uuid + "/view"
+	}
+
+	//se o qrcode for dinamico mas nao exista usuario logado, lancamos uma excecao
+	if qrcode.Dynamic && strings.TrimSpace(qrcode.User) == "" {
+		log.Logger().Warn("Solicitacao de inclusao qrcode dinamico sem estar logado")
+		return nil, &errors.BusinessError{Message: "Para inclusão de qrcodes dinamicos é necessário estar logado."}
 	}
 
 	qrcode.Content = contentString
