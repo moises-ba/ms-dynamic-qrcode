@@ -11,6 +11,7 @@ import (
 	"github.com/moises-ba/ms-dynamic-qrcode/config"
 	"github.com/moises-ba/ms-dynamic-qrcode/model/domain"
 	"github.com/moises-ba/ms-dynamic-qrcode/model/domain/usecase/qrcodeservice"
+	"github.com/moises-ba/ms-dynamic-qrcode/model/errors"
 	"github.com/moises-ba/ms-dynamic-qrcode/utils"
 	"github.com/moises-ba/ms-dynamic-qrcode/web/security/jwt/model"
 )
@@ -54,7 +55,12 @@ func (api *qrcodeApi) Generate(c *gin.Context) {
 		c.JSON(http.StatusOK, qrcodeResponse)
 	} else {
 		log.Logger().Error(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": true, "message": err.Error()})
+		httpErrorCode := http.StatusInternalServerError
+		if _, ok := err.(*errors.BusinessError); ok {
+			httpErrorCode = http.StatusForbidden
+		}
+
+		c.JSON(httpErrorCode, gin.H{"error": true, "message": err.Error()})
 	}
 }
 
