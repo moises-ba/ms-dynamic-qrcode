@@ -69,6 +69,7 @@ func main() {
 	qrCodeGroup.GET("/list", jwt.Authorize(qrCodeController.List, "ADMIN", "USER"))
 	qrCodeGroup.POST("/generate", jwt.Authorize(qrCodeController.Generate))
 	qrCodeGroup.DELETE("/:qrcodeid", jwt.Authorize(qrCodeController.Delete, "ADMIN", "USER"))
+	qrCodeGroup.GET("/:qrcodeid", qrCodeController.Get)
 
 	fileGroup := api.Group("/file")
 	fileGroup.POST("/uploadFile", jwt.Authorize(qrCodeController.Upload, "ADMIN", "USER"))

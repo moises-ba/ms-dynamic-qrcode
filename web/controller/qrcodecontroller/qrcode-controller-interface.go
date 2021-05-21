@@ -9,4 +9,5 @@ type QRCodeAPI interface {
 	Generate(c *gin.Context)
 	Upload(c *gin.Context)
 	Delete(c *gin.Context)
+	Get(c *gin.Context)
 }

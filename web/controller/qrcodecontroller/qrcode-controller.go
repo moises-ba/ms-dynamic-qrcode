@@ -36,7 +36,6 @@ func (api *qrcodeApi) List(c *gin.Context) {
 		log.Logger().Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": true, "message": err.Error()})
 	}
-
 }
 
 func (api *qrcodeApi) Generate(c *gin.Context) {
@@ -107,4 +106,19 @@ func (api *qrcodeApi) Delete(c *gin.Context) {
 		log.Logger().Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": true, "message": err.Error()})
 	}
+}
+
+func (api *qrcodeApi) Get(c *gin.Context) {
+	if qrCodes, err := api.service.FindQRCodes(&domain.QRCodeFilter{Uuid: c.Param("qrcodeid")}); err == nil {
+		if len(qrCodes) == 0 {
+			c.JSON(http.StatusOK, qrCodes[0])
+		} else {
+			c.JSON(http.StatusNoContent, nil)
+		}
+
+	} else {
+		log.Logger().Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": true, "message": err.Error()})
+	}
+
 }
